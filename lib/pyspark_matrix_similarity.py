@@ -130,4 +130,10 @@ def cos_sim_and_iou_for_row(
     df = df.withColumn("IOU", iou_udf(f.col(iou_col_name)))
 
     return df.select(["id", "tytul", "cos_similarity", "IOU"])
-    
+
+    def combine(df, a_param: float):
+        add_udf = f.udf(lambda x, y: a_param * x + (1 - a_param) * y)
+
+        df = df.withColumn("prediction", add_udf(df["cos_similarity"], df["IOU"]))
+
+        return df
